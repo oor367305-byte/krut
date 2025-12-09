@@ -1,0 +1,75 @@
+name: Review App
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    if: github.event.action != 'closed'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build images
+        run: docker compose -f docker-compose.yml build
+
+      - name: Start environment
+        env:
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          # Генерируем env как в start-pr.ps1
+          echo "NGINX_PORT=$((8000 + PR))" >> .env.pr
+          echo "API1_PORT=$((5000 + PR))" >> .env.pr
+          echo "API2_PORT=$((5100 + PR))" >> .env.pr
+          echo "POSTGRES_PORT=$((5400 + PR))" >> .env.pr
+          echo "REDIS_PORT=$((6400 + PR))" >> .env.pr
+          echo "PG_USER=postgres" >> .env.pr
+          echo "PG_PASSWORD=postgres" >> .env.pr
+          echo "PG_DB=review_db" >> .env.pr
+          
+          docker compose -f docker-compose.yml --env-file .env.pr -p pr$PR up -d --build
+
+      - name: Wait and test health
+        env:
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          sleep 30  # Даём время на старт
+          curl -f http://localhost:$((5000 + PR))/health || exit 1
+          curl -f http://localhost:$((5100 + PR))/health || exit 1
+          curl -f http://localhost:$((8000 + PR))/ || exit 1
+          echo "All services healthy!"
+
+      - name: Comment PR with status
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `Review environment tested successfully in CI! (Local ports in runner: NGINX ${8000 + context.issue.number})`
+            })
+
+  cleanup:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Stop and remove
+        env:
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          docker compose -f docker-compose.yml -p pr$PR down -v || true

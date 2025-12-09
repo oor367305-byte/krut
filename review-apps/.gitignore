@@ -1,0 +1,20 @@
+# Temp env files from PR scripts
+.env.pr*
+
+# General Docker/Compose ignores
+*.log
+docker-compose.override.yml
+
+# Node.js
+node_modules/
+npm-debug.log
+
+# VS Code
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
