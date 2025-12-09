@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Тестовая среда — Review</title>
+  <style>body{font-family:Arial;margin:40px}</style>
+</head>
+<body>
+  <h1>Тестовая среда — Review</h1>
+  <p>Frontend → Nginx → API1 и API2</p>
+  <hr/>
+  <p>
+    <button onclick="callApi('api1')">Вызвать API1</button>
+    <span id="api1-result"></span>
+  </p>
+  <p>
+    <button onclick="callApi('api2')">Вызвать API2</button>
+    <span id="api2-result"></span>
+  </p>
+
+<script>
+function callApi(api) {
+  fetch('/' + api + '/')
+    .then(r => r.text())
+    .then(t => {
+      document.getElementById(api + '-result').innerText = ' ' + t;
+    })
+    .catch(e => { document.getElementById(api + '-result').innerText = ' ERROR'; });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+FROM node:18-alpine
+WORKDIR /app
+RUN apk add --no-cache curl
+COPY index.js ./
+RUN npm init -y >/dev/null 2>&1 && npm i express pg ioredis >/dev/null 2>&1
+ENV PORT=5000
+EXPOSE 5000
+CMD ["node", "index.js"]
