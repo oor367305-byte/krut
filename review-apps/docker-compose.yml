@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   web:
+    image: ${DOCKER_USERNAME}/review-web:latest
     build:
       context: ./web
       dockerfile: Dockerfile
@@ -14,6 +15,7 @@ services:
       retries: 10
 
   nginx:
+    image: ${DOCKER_USERNAME}/review-nginx:latest
     build:
       context: ./nginx
       dockerfile: Dockerfile
@@ -33,6 +35,7 @@ services:
       retries: 10
 
   api1:
+    image: ${DOCKER_USERNAME}/review-api1:latest
     build:
       context: ./api1
       dockerfile: Dockerfile
@@ -45,7 +48,7 @@ services:
       - PG_DB=${PG_DB:-review_db}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    ports:  # Вернул для внешнего доступа (dev)
+    ports:
       - "${API1_PORT:-5000}:5000"
     depends_on:
       postgres:
@@ -59,6 +62,7 @@ services:
       retries: 10
 
   api2:
+    image: ${DOCKER_USERNAME}/review-api2:latest
     build:
       context: ./api2
       dockerfile: Dockerfile
@@ -71,7 +75,7 @@ services:
       - PG_DB=${PG_DB:-review_db}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-    ports:  # Вернул
+    ports:
       - "${API2_PORT:-5001}:5000"
     depends_on:
       postgres:

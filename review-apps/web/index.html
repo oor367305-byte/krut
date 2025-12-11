@@ -1,31 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
   <meta charset="utf-8"/>
-  <title>Тестовая среда — Review</title>
-  <style>body{font-family:Arial;margin:40px}</style>
+  <title>Тестовая среда — Review (Улучшенная версия)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; margin: 0 auto; }
+    h1 { color: #333; }
+    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    button:hover { background-color: #0056b3; }
+    .result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
+    .loader { display: none; font-style: italic; color: #888; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #f2f2f2; }
+    .error { color: red; }
+  </style>
 </head>
 <body>
   <h1>Тестовая среда — Review</h1>
-  <p>Frontend → Nginx → API1 и API2</p>
+  <p>Frontend → Nginx → API1 и API2 (с данными из Postgres и Redis)</p>
   <hr/>
-  <p>
-    <button onclick="callApi('api1')">Вызвать API1</button>
-    <span id="api1-result"></span>
-  </p>
-  <p>
-    <button onclick="callApi('api2')">Вызвать API2</button>
-    <span id="api2-result"></span>
-  </p>
+  
+  <section>
+    <h2>API1: Items</h2>
+    <button onclick="callApi('api1')">Загрузить Items из API1</button>
+    <span class="loader" id="api1-loader">Загрузка...</span>
+    <div class="result" id="api1-result"></div>
+  </section>
+  
+  <section style="margin-top: 30px;">
+    <h2>API2: Tasks</h2>
+    <button onclick="callApi('api2')">Загрузить Tasks из API2</button>
+    <span class="loader" id="api2-loader">Загрузка...</span>
+    <div class="result" id="api2-result"></div>
+  </section>
 
 <script>
 function callApi(api) {
-  fetch('/' + api + '/')
-    .then(r => r.text())
-    .then(t => {
-      document.getElementById(api + '-result').innerText = ' ' + t;
+  const loader = document.getElementById(`${api}-loader`);
+  const resultDiv = document.getElementById(`${api}-result`);
+  
+  loader.style.display = 'inline';
+  resultDiv.innerHTML = ''; // Очистка предыдущего результата
+  
+  const endpoint = api === 'api1' ? '/api1/items' : '/api2/tasks';
+  
+  fetch(endpoint)
+    .then(response => {
+      if (!response.ok) throw new Error('Ошибка сети');
+      return response.json();
     })
-    .catch(e => { document.getElementById(api + '-result').innerText = ' ERROR'; });
+    .then(data => {
+      loader.style.display = 'none';
+      if (data.length === 0) {
+        resultDiv.innerHTML = '<p class="error">Нет данных.</p>';
+        return;
+      }
+      
+      // Рендерим таблицу
+      let table = '<table><thead><tr>';
+      Object.keys(data[0]).forEach(key => { table += `<th>${key}</th>`; });
+      table += '</tr></thead><tbody>';
+      
+      data.forEach(item => {
+        table += '<tr>';
+        Object.values(item).forEach(value => { table += `<td>${value}</td>`; });
+        table += '</tr>';
+      });
+      
+      table += '</tbody></table>';
+      resultDiv.innerHTML = table;
+    })
+    .catch(error => {
+      loader.style.display = 'none';
+      resultDiv.innerHTML = `<p class="error">Ошибка: ${error.message}</p>`;
+    });
 }
 </script>
 </body>
