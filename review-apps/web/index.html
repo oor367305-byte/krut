@@ -3,37 +3,29 @@
 <head>
   <meta charset="utf-8"/>
   <title>Тестовая среда — Review (Улучшенная версия)</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 40px; max-width: 800px; margin: 0 auto; }
-    h1 { color: #333; }
-    button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px; }
-    button:hover { background-color: #0056b3; }
-    .result { margin-top: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
-    .loader { display: none; font-style: italic; color: #888; }
-    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-    .error { color: red; }
-  </style>
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <!-- Опционально: <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> -->
 </head>
 <body>
-  <h1>Тестовая среда — Review</h1>
-  <p>Frontend → Nginx → API1 и API2 (с данными из Postgres и Redis)</p>
-  <hr/>
-  
-  <section>
-    <h2>API1: Items</h2>
-    <button onclick="callApi('api1')">Загрузить Items из API1</button>
-    <span class="loader" id="api1-loader">Загрузка...</span>
-    <div class="result" id="api1-result"></div>
-  </section>
-  
-  <section style="margin-top: 30px;">
-    <h2>API2: Tasks</h2>
-    <button onclick="callApi('api2')">Загрузить Tasks из API2</button>
-    <span class="loader" id="api2-loader">Загрузка...</span>
-    <div class="result" id="api2-result"></div>
-  </section>
+  <header>
+    <h1>Тестовая среда — Review</h1>
+    <p>Frontend → Nginx → API1 и API2 (с данными из Postgres и Redis)</p>
+  </header>
+  <main class="container">
+    <hr/>
+    <section class="api-section">
+      <h2>API1: Items</h2>
+      <button onclick="callApi('api1')">Загрузить Items из API1</button>
+      <span class="loader" id="api1-loader">Загрузка...</span>
+      <div class="result" id="api1-result"></div>
+    </section>
+    <section class="api-section">
+      <h2>API2: Tasks</h2>
+      <button onclick="callApi('api2')">Загрузить Tasks из API2</button>
+      <span class="loader" id="api2-loader">Загрузка...</span>
+      <div class="result" id="api2-result"></div>
+    </section>
+  </main>
 
 <script>
 function callApi(api) {
@@ -41,7 +33,7 @@ function callApi(api) {
   const resultDiv = document.getElementById(`${api}-result`);
   
   loader.style.display = 'inline';
-  resultDiv.innerHTML = ''; // Очистка предыдущего результата
+  resultDiv.innerHTML = ''; 
   
   const endpoint = api === 'api1' ? '/api1/items' : '/api2/tasks';
   
@@ -57,7 +49,6 @@ function callApi(api) {
         return;
       }
       
-      // Рендерим таблицу
       let table = '<table><thead><tr>';
       Object.keys(data[0]).forEach(key => { table += `<th>${key}</th>`; });
       table += '</tr></thead><tbody>';

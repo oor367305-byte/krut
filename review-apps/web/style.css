@@ -1,0 +1,124 @@
+/* style.css */
+body {
+  font-family: 'Roboto', Arial, sans-serif; /* Если fonts подключены, иначе Arial */
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #f0f4f8, #d9e2ec); /* Градиентный фон */
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  background: #007bff; /* Синий градиент */
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.5em;
+}
+
+p {
+  margin: 10px 0 0;
+  font-size: 1.1em;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.api-section {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin: 20px;
+  flex: 1 1 400px; /* Responsive: 2 колонки на десктопе, 1 на мобильном */
+  transition: transform 0.3s ease;
+}
+
+.api-section:hover {
+  transform: translateY(-5px); /* Лёгкий lift on hover */
+}
+
+h2 {
+  color: #007bff;
+  font-size: 1.8em;
+  margin-bottom: 15px;
+}
+
+button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.loader {
+  display: none;
+  font-style: italic;
+  color: #888;
+  margin-left: 10px;
+}
+
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  overflow-x: auto; /* Для широких таблиц */
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9; /* Zebra stripes для таблицы */
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+/* Responsive media query */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .api-section {
+    margin: 10px 0;
+  }
+}
